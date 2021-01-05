@@ -1,0 +1,82 @@
+<html>
+<head>
+
+<title> This is an AJAX example </title>
+
+<script>
+if(typeof XDomainRequest == "undefined")
+	
+XDomainRequest = function()
+{
+	try
+	{
+		return new XMLHttpRequest();
+	}
+	
+	catch(e){} 
+	
+	try
+	{
+		return new ActiveXObject("Msxml2.XMLHTTP.6.0");		
+	}
+	
+	catch(e){}
+	
+	try
+	{
+		return new ActiveXObject("Msxml2.XMLHTTP.3.0");	
+	}
+	
+	catch(e){}
+	
+	try
+	{
+		return new ActiveXObject("Msxml2.XMLHTTP");	
+	}
+	
+	catch(e)
+	{
+		throw new Error("XHR/XDR unsupported.")
+	}
+	
+};
+
+var xdr = new XDomainRequest();
+
+xdr.onload = function()
+{
+	txt = xdr.responseText;
+	
+	if(window.DOMParser)
+	{
+		parser = new DOMParser();
+		xmlDoc = parser.parseFromString(txt, "text/xml");		
+	}
+	
+	else
+	{
+		xmlDoc = new ActiveXObject ("Microsoft.XMLDOM");
+		xmlDoc.async=false;
+		xmlDoc.loadXML(txt);
+	}
+	
+	stuff = xmlDoc.getElementsByTagName("servertime")[0].getElementsByTagName("date")[0].childNodes[0].nodeValue;
+	document.getElementById("servertime").innerHTML = stuff;
+}
+
+xdr.open("GET", "http://localhost/servertime.php", true);
+xdr.send(null);
+</script>
+
+</head>
+
+
+<body>
+
+    <p> This is an AJAX date example. </p>
+	<div id="servertime"> </div>
+	
+</body>
+
+
+</html>
